@@ -9,7 +9,7 @@
 
         <div class="logo-container">
           <div class="logo" @click="goHome">
-            <!-- <img v-if="!isCollapse" src="/logo.svg" alt="Logo" class="logo-img" /> -->
+            <!-- <img v-if="!isCollapse" src="avatar" alt="Logo" class="logo-img" /> -->
             <h2 v-if="!isCollapse && !isMobile" class="logo-text"> {{ appName }}</h2>
             <h2 v-else-if="!isCollapse && isMobile" class="logo-text">
               糖果
@@ -155,7 +155,20 @@
 
         <!-- 底部版权信息（移动端隐藏） -->
         <el-footer class="footer" v-if="!isMobile">
-          <span>© {{ currentYear }} {{ appName }}. All rights reserved.</span>
+          <div class="footer-left">
+            <div class="footer-copyright">
+              © {{ currentYear }} {{ appName }}. All rights reserved.
+            </div>
+            <div class="footer-beian">
+              <a v-if="icpLicense" href="https://beian.miit.gov.cn/" target="_blank">
+                {{ icpLicense }}
+              </a>
+              <a v-if="publicSecurityLicense" href="http://www.beian.gov.cn/" target="_blank">
+                {{ publicSecurityLicense }}
+              </a>
+            </div>
+          </div>
+
           <!-- <span class="footer-right">
             <el-link type="primary" underline="never">关于我们</el-link>
             <el-link type="primary" underline="never">联系我们</el-link>
@@ -199,9 +212,12 @@ import {
   SwitchButton, ArrowDown, Search
 } from '@element-plus/icons-vue'
 import Sidebar from '@/components/layout/Sidebar.vue';
+import { useAuthStore } from '@/stores/auth'
 
 const route = useRoute();
 const router = useRouter();
+
+const authStore = useAuthStore()
 
 // 响应式状态
 const isCollapse = ref(false);
@@ -210,6 +226,10 @@ const showSearch = ref(false)
 const searchKeyword = ref('')
 const showTabs = ref(true)
 const activeTab = ref('')
+
+const avatar = ref<string>('https://picsum.photos/200/200?random=10')
+const icpLicense = ref<string | null>();
+const publicSecurityLicense = ref<string | null>();
 
 // 侧边栏宽度
 const sidebarWidth = computed(() => {
@@ -402,7 +422,22 @@ const handlerClose = () => {
   }
 }
 
-onMounted(() => {
+const fetchSimpleUser = async (id: number) => {
+  try {
+    const simpleUser = await authStore.getUserAvatar(id)
+    if (simpleUser) {
+      avatar.value = simpleUser.avatar || ''
+      icpLicense.value = simpleUser.icpLicense
+      publicSecurityLicense.value = simpleUser.publicSecurityLicense
+    }
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+onMounted(async () => {
+  await fetchSimpleUser(10)
+
   checkScreenWidth()
   window.addEventListener('resize', checkScreenWidth)
   loadSearchHistory()
@@ -485,7 +520,7 @@ $breakpoint-tablet: 992px;
       .logo-text {
         margin: 0;
         color: #fff;
-        font-size: 2rem;
+        font-size: 1.8rem;
         font-weight: 600;
         white-space: nowrap;
 
@@ -695,15 +730,32 @@ $breakpoint-tablet: 992px;
 
 // 底部样式
 .footer {
-  background: #fff;
-  border-top: 1px solid #e4e7ed;
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 300px;
   align-items: center;
   justify-content: space-between;
-  padding: 0 20px;
   height: 50px;
-  font-size: 12px;
+  padding: 0 20px;
+  border-top: 1px solid #e4e7ed;
+  font-size: 0.875rem;
+  background: #fff;
   color: #909399;
+
+  .footer-left {
+    display: flex;
+    gap: 20px;
+
+    .footer-beian {
+      a {
+        color: variables.$color-text-regular;
+        text-decoration: none;
+
+        &:hover {
+          color: variables.$color-primary;
+        }
+      }
+    }
+  }
 
   .footer-right {
     display: flex;

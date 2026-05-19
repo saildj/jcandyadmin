@@ -74,3 +74,9 @@ export interface LoginResponse {
   tokenType: 'Bearer'; // Token 类型
   userInfo: UserInfo;
 }
+
+export interface SimpleUser {
+  avatar?: string,
+  icpLicense?: string,
+  publicSecurityLicense?: string
+}

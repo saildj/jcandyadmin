@@ -185,7 +185,7 @@ const emailCode = ref('')
 const countdown = ref(0)
 const emailVerified = ref(false)
 const phoneVerified = ref(false)
-console.log(authStore.userInfo)
+// console.log(authStore.userInfo)
 const formData = reactive({
   avatar: authStore.userInfo?.avatar || '',
   username: authStore.userInfo?.username || '',

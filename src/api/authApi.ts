@@ -1,4 +1,4 @@
-import request from './index';
+import request, { ResponseData } from './index';
 import { CaptchaParam, LoginParams, RegisterParams, UserInfo } from "@/types/user";
 
 export const authApi = {
@@ -25,6 +25,10 @@ export const authApi = {
   // 更新用户信息
   updateProfile(info: Partial<UserInfo>) {
     return request.post('/auth/profile', info)
+  },
+
+  getUserAvatar(params: Partial<UserInfo>) {
+    return request.get('/auth/avatar', params);
   },
 
   validateCaptcha(captchaParam: CaptchaParam) {

@@ -6,7 +6,8 @@ import type {
   CaptchaParam,
   RegisterParams,
   LoginResponse,
-  CaptchaResponse
+  CaptchaResponse,
+  SimpleUser
 } from '@/types/user'
 import { generateId } from '@/utils/common'
 import { printError, printMsg } from '@/utils/prints';
@@ -185,6 +186,17 @@ export const useAuthStore = defineStore('auth', () => {
     return userInfo.value
   }
 
+  const getUserAvatar = async (id: number): Promise<SimpleUser> => {
+    let data = {} as SimpleUser
+
+    const result = await authApi.getUserAvatar({ id })
+    if (result) {
+      data = result as SimpleUser
+    }
+
+    return data
+  }
+
   // 初始化
   initAuth()
 
@@ -199,6 +211,7 @@ export const useAuthStore = defineStore('auth', () => {
     updateUserInfo,
     refreshCaptcha,
     register,
-    getUserInfo
+    getUserInfo,
+    getUserAvatar
   }
 })
