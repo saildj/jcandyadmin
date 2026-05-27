@@ -42,6 +42,7 @@ export interface BlogForm {
   commentPermission: `${ECommentPermission}`;
   commentAllowedRoles?: string;
   photos?: PhotoData[];
+  publishedAt?: string;
 }
 
 export interface BlogQueryParams {

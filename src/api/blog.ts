@@ -1,7 +1,6 @@
 import { CODE_BL, makeUrl } from './base';
 import request from './index';
 import type { Blog, BlogForm, BlogQueryParams } from '@/types/blog';
-import type { PhotoData } from '@/types/photo';
 
 function blogUrl(url: string = ''): string {
   return makeUrl(CODE_BL, url);

@@ -20,20 +20,6 @@
             <RichEditor v-model="formData.content" />
           </el-form-item>
 
-          <!-- 摘要 -->
-          <el-form-item label="摘要">
-            <el-input v-model="formData.summary" type="textarea" :rows="5" placeholder="请输入博客摘要（留空则自动生成）"
-              maxlength="200" show-word-limit />
-          </el-form-item>
-        </el-col>
-
-        <!-- 右侧设置区域 -->
-        <el-col :xs="24" :lg="8">
-          <!-- 封面图 -->
-          <el-form-item label="封面图">
-            <ImageUpload v-model="formData.coverImage" @upload-success="uploadHandler" />
-          </el-form-item>
-
           <!-- 分类 -->
           <el-form-item label="分类" prop="categoryId">
             <!-- <el-select v-model="formData.categoryId" placeholder="请选择分类" style="width: 100%">
@@ -57,6 +43,20 @@
             </el-select>
           </el-form-item>
 
+          <!-- 摘要 -->
+          <el-form-item label="摘要">
+            <el-input v-model="formData.summary" type="textarea" :rows="5" placeholder="请输入博客摘要（留空则自动生成）"
+              maxlength="200" show-word-limit />
+          </el-form-item>
+        </el-col>
+
+        <!-- 右侧设置区域 -->
+        <el-col :xs="24" :lg="8">
+          <!-- 封面图 -->
+          <el-form-item label="封面图">
+            <ImageUpload v-model="formData.coverImage" @upload-success="uploadHandler" />
+          </el-form-item>
+
           <!-- 状态 -->
           <el-form-item label="状态" prop="status">
             <el-radio-group v-model="formData.status">
@@ -64,6 +64,12 @@
               <el-radio value="published">发布</el-radio>
               <!-- <el-radio value="archived">归档</el-radio> -->
             </el-radio-group>
+          </el-form-item>
+
+          <!-- 发布日期 -->
+          <el-form-item label="发布日期" prop="publishedAt">
+            <el-date-picker v-model="formData.publishedAt" type="datetime" placeholder="选择发布日期和时间"
+              value-format="YYYY-MM-DD HH:mm:ss" format="YYYY-MM-DD HH:mm:ss" />
           </el-form-item>
 
           <!-- 文章可见性 -->
@@ -169,7 +175,8 @@ const formData = reactive<BlogForm>({
   allowedRoles: '',
   commentPermission: 'all',
   commentAllowedRoles: '',
-});
+  publishedAt: ''
+} as BlogForm);
 
 const rules: FormRules = {
   title: [
@@ -238,6 +245,7 @@ const fetchBlogDetail = async () => {
       status: blog.status,
       isTop: blog.isTop,
       isComment: blog.isComment
+      , publishedAt: blog.publishedAt || ''
     });
 
     // 由于标签和博客是多对多关系，所以需要单独处理
