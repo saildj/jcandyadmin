@@ -23,7 +23,7 @@
 
         <el-form-item>
           <el-select v-model="searchForm.subject" placeholder="类别" clearable style="width: 100px;">
-            <el-option v-for="type in types" :key="type.id" :label="type.name" :value="type.value" />
+            <el-option v-for="subject in subjects" :key="subject.id" :label="subject.name" :value="subject.value" />
           </el-select>
         </el-form-item>
 
@@ -45,6 +45,11 @@
             搜索
           </el-button>
           <el-button @click="handleReset">重置</el-button>
+        </el-form-item>
+
+        <el-form-item class="el-form-item">
+          <el-date-picker v-model="searchForm.publishedRange" type="daterange" start-placeholder="开始发布日期"
+            end-placeholder="结束发布日期" value-format="YYYY-MM-DD" format="YYYY-MM-DD" range-separator="至" unlink-panels />
         </el-form-item>
       </el-form>
     </div>
@@ -108,9 +113,15 @@
       <el-table-column prop="views" label="浏览" width="80" align="center" />
       <el-table-column prop="likes" label="点赞" width="80" align="center" />
 
-      <el-table-column prop="createdAt" label="创建时间" width="180">
+      <!-- <el-table-column prop="createdAt" label="创建时间" width="180">
         <template #default="{ row }">
           {{ formatDate(row.createdAt) }}
+        </template>
+      </el-table-column> -->
+
+      <el-table-column prop="publishedAt" label="发布日期" width="180">
+        <template #default="{ row }">
+          {{ row.publishedAt ? formatDate(row.publishedAt) : '-' }}
         </template>
       </el-table-column>
 
@@ -151,6 +162,7 @@ import { useRouter } from 'vue-router';
 import { ElMessage, ElMessageBox, FilterNodeMethodFunction, TreeNodeData } from 'element-plus';
 import { Search, Plus, Delete } from '@element-plus/icons-vue';
 import { useBlogStore } from '@/stores/blog';
+import { assistApi } from '@/api/assist';
 import { useCategoryStore } from '@/stores/category';
 import { checkScreenWidth, formatDate } from '@/utils/common';
 import { Blog } from '@/types/blog';
@@ -183,16 +195,27 @@ const statusText: Record<string, string> = {
   archived: '已归档'
 } as const;
 
-const types = [
-  { id: 1, name: '文章', value: 'article' },
-  { id: 2, name: '照片', value: 'photo' },
-]
+const subjects = ref<{ id: number; name: string; value: string }[]>([]);
+
+const loadSubjects = async () => {
+  try {
+    const res = await assistApi.getSubjects({ type: 'subject' });
+    // assume API returns array directly or under data
+    const data = res?.data ?? res;
+    if (Array.isArray(data)) {
+      subjects.value = data;
+    }
+  } catch (error) {
+    console.error('获取科目失败:', error);
+  }
+}
 
 const searchForm = reactive({
   keyword: '',
   status: '',
   categoryId: '',
   subject: '',
+  publishedRange: [] as string[],
   appType: 'admin',
 });
 
@@ -205,17 +228,26 @@ const pagination = reactive({
 onMounted(async () => {
   await Promise.all([
     fetchBlogs(),
-    categoryStore.fetchCategories()
+    categoryStore.fetchCategories(),
+    loadSubjects()
   ]);
 });
 
 const fetchBlogs = async () => {
   try {
     loading.value = true;
-    await blogStore.fetchBlogs({
+    // build params and include published date range if provided
+    const params: Record<string, unknown> = {
       ...searchForm,
       ...pagination
-    });
+    };
+
+    if (searchForm.publishedRange && searchForm.publishedRange.length === 2) {
+      params.startDate = searchForm.publishedRange[0];
+      params.endDate = searchForm.publishedRange[1];
+    }
+
+    await blogStore.fetchBlogs(params);
   } catch (error) {
     console.error('获取博客列表失败:', error);
   } finally {

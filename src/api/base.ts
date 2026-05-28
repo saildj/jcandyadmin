@@ -4,6 +4,7 @@ const CODE_CA = 'CA';
 const CODE_TA = 'TA';
 const CODE_CO = 'CO';
 const CODE_AU = 'AU';
+const CODE_AS = 'AS';
 
 const PREFIX: Record<string, string> = {
   [CODE_BL]: 'blog',
@@ -11,6 +12,7 @@ const PREFIX: Record<string, string> = {
   [CODE_TA]: 'tag',
   [CODE_CO]: 'comment',
   [CODE_AU]: 'auth',
+  [CODE_AS]: 'assist'
 }
 
 function makeUrl(code: string, url: string = ''): string {
@@ -23,6 +25,7 @@ export {
   CODE_TA,
   CODE_CO,
   CODE_AU,
+  CODE_AS,
 
   makeUrl
 }

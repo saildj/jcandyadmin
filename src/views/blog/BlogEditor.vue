@@ -11,7 +11,7 @@
 
           <el-form-item label="类别" prop="subject">
             <el-select v-model="formData.subject" placeholder="请选择类型" clearable style="width: 100px;">
-              <el-option v-for="type in types" :key="type.id" :label="type.name" :value="type.value" />
+              <el-option v-for="subject in subjects" :key="subject.id" :label="subject.name" :value="subject.value" />
             </el-select>
           </el-form-item>
 
@@ -140,11 +140,13 @@ import type { FormInstance, FormRules } from 'element-plus';
 import RichEditor from '@/components/ui/RichEditor.vue';
 import ImageUpload from '@/components/ui/ImageUpload.vue';
 import { useBlogStore } from '@/stores/blog';
-import { useCategoryStore } from '@/stores/category';
 import { useTagStore } from '@/stores/tag';
+import { useCategoryStore } from '@/stores/category';
+import { assistApi } from '@/api/assist';
 import type { BlogForm } from '@/types/blog';
-import { isNonEmptyArrayTs } from '@/utils/common';
 import { Photo } from '@/types/photo';
+import type { AssistParams } from '@/types/assist';
+import { isNonEmptyArrayTs } from '@/utils/common';
 
 const route = useRoute();
 const router = useRouter();
@@ -198,24 +200,51 @@ const rules: FormRules = {
   ]
 };
 
-const types = [
-  { id: 1, name: '文章', value: 'article' },
-  { id: 2, name: '照片', value: 'photo' },
-]
+const subjects = ref<AssistParams[]>([]);
+const visibilities = ref<AssistParams[]>([]);
+const commentPermissions = ref<AssistParams[]>([]);
 
-const visibilities = [
-  { name: '所有人可见', value: 'public' },
-  { name: '仅登陆用户可见', value: 'registered_only' },
-  { name: '基于角色的访问控制', value: 'role_based' },
-  { name: '仅作者和管理员可见', value: 'private' },
-]
+const loadSubjects = async () => {
+  try {
+    const res = await assistApi.getSubjects({ type: 'subject' });
+    const data = res?.data ?? res;
+    if (Array.isArray(data)) subjects.value = data;
+  } catch (error) {
+    console.error('获取类别失败:', error);
+  }
+}
 
-const commentPermissions = [
-  { name: '所有人', value: 'all' },
-  { name: '注册用户', value: 'registed' },
-  { name: '基于角色的评论控制', value: 'role_based' },
-  { name: '仅作者', value: 'none' },
-]
+// const visibilities = [
+//   { name: '所有人可见', value: 'public' },
+//   { name: '仅登陆用户可见', value: 'registered_only' },
+//   { name: '基于角色的访问控制', value: 'role_based' },
+//   { name: '仅作者和管理员可见', value: 'private' },
+// ]
+const loadVisibilities = async () => {
+  try {
+    const res = await assistApi.getSubjects({ type: 'visibility' });
+    const data = res?.data ?? res;
+    if (Array.isArray(data)) visibilities.value = data;
+  } catch (error) {
+    console.error('获取可见性选项失败:', error);
+  }
+}
+
+// const commentPermissions = [
+//   { name: '所有人', value: 'all' },
+//   { name: '注册用户', value: 'registed' },
+//   { name: '基于角色的评论控制', value: 'role_based' },
+//   { name: '仅作者', value: 'none' },
+// ]
+const loadCommentPermissions = async () => {
+  try {
+    const res = await assistApi.getSubjects({ type: 'comment_permission' });
+    const data = res?.data ?? res;
+    if (Array.isArray(data)) commentPermissions.value = data;
+  } catch (error) {
+    console.error('获取评论权限选项失败:', error);
+  }
+}
 
 const categoryTree = computed(() => categoryStore.categoryTree);
 const tags = computed(() => tagStore.tags);
@@ -225,7 +254,10 @@ const ckeys = computed(() => categoryStore.getCategoryKeys);
 onMounted(async () => {
   await Promise.all([
     categoryStore.fetchCategories(),
-    tagStore.fetchTags()
+    tagStore.fetchTags(),
+    loadSubjects(),
+    loadVisibilities(),
+    loadCommentPermissions()
   ]);
 
   if (isEditMode.value) {

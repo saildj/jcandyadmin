@@ -65,10 +65,10 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="count" label="文章数" width="100" align="center">
+      <el-table-column prop="blogCount" label="文章数" width="100" align="center">
         <template #default="{ row }">
           <el-tag size="small">
-            {{ row.count || 0 }}
+            {{ row.blogCount || 0 }}
           </el-tag>
         </template>
       </el-table-column>
