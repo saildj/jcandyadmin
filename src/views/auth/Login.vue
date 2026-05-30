@@ -208,6 +208,7 @@ import {
 import { useAuthStore } from '@/stores/auth'
 import { CaptchaResponse } from '@/types/user';
 import { printMsg } from '@/utils/prints';
+import { useAppName } from '@/composables/useAppName'
 
 const router = useRouter()
 const route = useRoute()
@@ -224,10 +225,12 @@ const captchaImage = ref('')
 const enableRegister = ref(true)
 
 // 标题
-const appName = import.meta.env.VITE_APP_TITLE || '博客管理系统'
+// const appName = import.meta.env.VITE_APP_TITLE || '博客管理系统'
 const appVersion = import.meta.env.VITE_APP_VERSION || '1.0.0'
 const appSupport = import.meta.env.VITE_APP_TECH_SUPPORT
 const currentYear = new Date().getFullYear()
+
+const { appName } = useAppName('管理系统')
 
 // 是否显示其他登录方式（根据环境配置）
 const showOtherLogin = import.meta.env.VITE_ENABLE_SOCIAL_LOGIN === 'true'

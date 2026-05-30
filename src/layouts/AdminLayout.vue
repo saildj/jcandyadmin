@@ -213,6 +213,7 @@ import {
 } from '@element-plus/icons-vue'
 import Sidebar from '@/components/layout/Sidebar.vue';
 import { useAuthStore } from '@/stores/auth'
+import { useAppName } from '@/composables/useAppName'
 
 const route = useRoute();
 const router = useRouter();
@@ -242,12 +243,7 @@ const breadcrumbs = computed(() => {
   return route.matched.filter(item => item.meta?.title);
 });
 
-const appName = computed(() => {
-  const titleMaster = import.meta.env.VITE_APP_TITLE_MASTER || '糖果'
-  const titleSlave = import.meta.env.VITE_APP_TITLE_SLAVE || '管理平台'
-  const title = `${titleMaster} · ${titleSlave}`
-  return title || '糖果管理平台'
-})
+const { appName } = useAppName()
 
 // 用户信息
 const userInfoStr = localStorage.getItem('user_info');
@@ -366,9 +362,25 @@ const markAllRead = () => {
   ElMessage.success('已标记所有通知为已读')
 }
 
-// 标签页点击
-const handleTabClick = (tab: any) => {
-  router.push(tab.props.name)
+// 标签页点击（避免使用 any：兼容 el-tabs 的 (pane, ev) 签名）
+const handleTabClick = (...args: unknown[]) => {
+  const pane = args[0];
+
+  // 如果 pane 是字符串（name/path）
+  if (typeof pane === 'string') {
+    router.push(pane);
+    return;
+  }
+
+  // 如果 pane 是对象，尝试从 props.name 或 name 字段取值
+  if (pane && typeof pane === 'object') {
+    const p = pane as Record<string, unknown>;
+    const props = p.props as Record<string, unknown> | undefined;
+    const nameField = props?.name ?? p.name;
+    if (typeof nameField === 'string' || typeof nameField === 'number') {
+      router.push(String(nameField));
+    }
+  }
 }
 
 // 标签页关闭
