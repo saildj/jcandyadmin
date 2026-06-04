@@ -56,6 +56,7 @@
       <el-table-column prop="name" label="分类名称" width="200">
         <template #default="{ row }">
           <div class="category-name">
+            <span class="category-color" :style="{ backgroundColor: row.color || '#409eff' }"></span>
             <span class="name-text">{{ row.name }}</span>
             <el-tag v-if="row.parentId === null" size="small" type="info">
               根分类
@@ -138,6 +139,14 @@
           }" check-strictly :render-after-expand="false" clearable placeholder="请选择父分类（不选则为根分类）" style="width: 100%" />
         </el-form-item>
 
+        <el-form-item label="分类颜色" prop="color">
+          <div class="color-picker-wrapper">
+            <el-color-picker v-model="formData.color" show-alpha :predefine="predefinedColors" placeholder="" />
+            <el-input v-model="formData.color" placeholder="#409eff" style="margin-left: 10px; width: 120px;" />
+          </div>
+          <div class="form-tip">用于前端显示，可选</div>
+        </el-form-item>
+
         <el-form-item label="排序" prop="sort">
           <el-input-number v-model="formData.sort" :min="0" :max="999" controls-position="right" style="width: 100%" />
         </el-form-item>
@@ -215,6 +224,7 @@ const formData = reactive<CategoryForm>({
   name: '',
   slug: '',
   description: '',
+  color: '#409eff',
   parentId: undefined,
   sort: 0
 })
@@ -233,6 +243,22 @@ const formRules: FormRules = {
     { type: 'number', min: 0, max: 999, message: '排序值在 0-999 之间', trigger: 'blur' }
   ]
 }
+
+// 预定义颜色，与 TagList 保持一致
+const predefinedColors = [
+  '#409eff',
+  '#67c23a',
+  '#e6a23c',
+  '#f56c6c',
+  '#909399',
+  '#ff69b4',
+  '#9b59b6',
+  '#3498db',
+  '#2ecc71',
+  '#f1c40f',
+  '#e74c3c',
+  '#95a5a6'
+]
 
 // 判断是否为父节点
 // const isParent = (row: CategoryTree) => {
@@ -325,6 +351,7 @@ const handleEdit = (row: CategoryForm) => {
     name: row.name,
     slug: row.slug,
     description: row.description,
+    color: row.color || '#409eff',
     parentId: row.parentId,
     sort: row.sort
   })
@@ -430,6 +457,7 @@ const resetForm = () => {
     name: '',
     slug: '',
     description: '',
+    color: '#409eff',
     parentId: dialog.parentId,
     sort: 0
   })
@@ -502,6 +530,13 @@ $breakpoint-mobile: 768px;
     display: flex;
     align-items: center;
     gap: 8px;
+
+    .category-color {
+      width: 20px;
+      height: 20px;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
 
     .name-text {
       font-weight: 500;

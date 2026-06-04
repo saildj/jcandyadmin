@@ -64,6 +64,7 @@ export const useAuthStore = defineStore('auth', () => {
       captchaId: params.captchaId,
       captchInput: params.captcha
     }
+
     const result = await authApi.validateCaptcha(captchaParam);
     if (!result || !result.isValid) {
       throw new BlogError("无效的验证码");
@@ -82,7 +83,7 @@ export const useAuthStore = defineStore('auth', () => {
     token.value = loginData.accessToken
     userInfo.value = loginData.userInfo
     permissions.value = loginData.userInfo.permissions
-
+    console.log(JSON.stringify(loginData))
     // 保存到本地存储
     localStorage.setItem('access_token', loginData.accessToken)
     localStorage.setItem('user_info', JSON.stringify(loginData.userInfo))

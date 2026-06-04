@@ -4,6 +4,8 @@ export interface Category {
   slug: string
   description?: string
   parentId?: number | string
+  /** 可选的前端显示颜色，例如 '#409eff' */
+  color?: string
   sort: number
   blogCount: number
   createdAt: string
@@ -22,6 +24,7 @@ export interface CategoryForm {
   name: string
   slug: string
   description?: string
+  color?: string
   parentId?: number | string
   sort: number
 }

@@ -88,10 +88,34 @@ const router = createRouter({
   routes
 });
 
+// 临时增加，备案后再删除
+const loginInfo = {
+  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxNCIsInVzZXJuYW1lIjoiYWRtaW4iLCJyb2xlIjoidmlzaXRvciIsImp0aSI6Ijc1OTAwZmM1LWUzOWUtNGY4OS04ZjA4LWYyZjc2NzI4NWI4OSIsImlhdCI6MTc4MDU2MDIzOSwiZXhwIjoxNzgzMTUyMjM5LCJhdWQiOiJqY2FuZHktYWRtaW4iLCJpc3MiOiJqaW5nb3QifQ.asAQCdS8lpHXG4DFbaHWw0M5ClxnNn88zO0IGUEBZh4",
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxNCIsInR5cGUiOiJyZWZyZXNoIiwianRpIjoiMjQzMjBkMDAtYzQzNy00ZjVlLWI4YjUtZWJlYWEwOWExMTgzIiwiaWF0IjoxNzgwNTYwMjM5LCJleHAiOjE3ODExNjUwMzksImlzcyI6ImppbmdvdCJ9.yJ_KcnLfEt1_b47MIUSBRGyCaLOdg0Ngx8dOkhibw9I",
+  "expiresIn": 2592000,
+  "tokenType":
+    "Bearer",
+  "userInfo": {
+    "id": "14",
+    "username": "admin",
+    "nickname": "管理员",
+    "email": "admin123@126.com",
+    "role": "visitor",
+    "avatar": null,
+    "permissions": ["*"]
+  }
+}
+
 // 路由守卫
 router.beforeEach((to, _from, next) => {
-  const token = localStorage.getItem('access_token');
+  // const token = localStorage.getItem('access_token');
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
+
+  // ==== BEGIN 临时增加，备案后再删除
+  const token = loginInfo.accessToken;
+  localStorage.setItem('access_token', loginInfo.accessToken);
+  localStorage.setItem('user_info', JSON.stringify(loginInfo.userInfo));
+  // ==== END 临时增加，备案后再删除``
 
   if (requiresAuth && !token) {
     ElMessage.warning('请先登录');

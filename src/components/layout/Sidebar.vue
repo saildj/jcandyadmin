@@ -32,7 +32,7 @@
     </el-menu-item>
 
     <!-- 评论管理 -->
-    <el-sub-menu index="comments">
+    <!-- <el-sub-menu index="comments">
       <template #title>
         <el-icon>
           <ChatDotRound />
@@ -50,16 +50,16 @@
           <Clock />
         </el-icon>
         <span>待审核</span>
-        <!-- <el-badge :value="pendingCount" class="menu-badge" v-if="pendingCount > 0" /> -->
+        <el-badge :value="pendingCount" class="menu-badge" v-if="pendingCount > 0" />
       </el-menu-item>
       <el-menu-item index="/comments/spam">
         <el-icon>
           <Warning />
         </el-icon>
         <span>垃圾评论</span>
-        <!-- <el-badge :value="spamCount" class="menu-badge" v-if="spamCount > 0" /> -->
+        <el-badge :value="spamCount" class="menu-badge" v-if="spamCount > 0" />
       </el-menu-item>
-    </el-sub-menu>
+    </el-sub-menu> -->
 
     <!-- 系统设置 -->
     <el-menu-item index="/settings" v-if="!isMobile">

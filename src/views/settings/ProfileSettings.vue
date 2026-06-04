@@ -57,7 +57,7 @@
           <el-radio-group v-model="formData.gender">
             <el-radio value="male">男</el-radio>
             <el-radio value="female">女</el-radio>
-            <el-radio value="other">保密</el-radio>
+            <el-radio value="secret">保密</el-radio>
           </el-radio-group>
         </el-form-item>
 
