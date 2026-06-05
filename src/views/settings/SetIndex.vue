@@ -36,7 +36,14 @@
 
 <script setup lang="ts">
 import { ref, reactive, markRaw, onMounted } from 'vue'
-import { Setting, User, Lock, Bell, Brush, Folder } from '@element-plus/icons-vue'
+import {
+  // Setting,
+  User,
+  // Lock,
+  // Bell,
+  // Brush,
+  // Folder,
+} from '@element-plus/icons-vue'
 import type { TabsPaneContext } from 'element-plus'
 
 // 标签页配置
